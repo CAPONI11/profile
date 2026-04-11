@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CAPONI | Profile</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    *{ margin:0; padding:0; box-sizing:border-box; font-family:"Segoe UI", Arial, sans-serif; }
+    body{ height:100vh; width: 100vw; overflow:hidden; background:#000; color:#fff; display: flex; justify-content: center; align-items: center; }
+
+    /* ===== الخلفية ===== */
+    #bgBlur{ position:fixed; top:0; left:0; width:100%; height:100%; object-fit:cover; filter:blur(25px) brightness(0.4); z-index:-4; }
+    #bgVideo{ position:fixed; top:0; left:0; width:100%; height:100%; object-fit:cover; z-index:-3; }
+    .bg-dark{ position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:-2; }
+
+    #overlay{ position:fixed; inset:0; background:rgba(0,0,0,0.95); display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:100; transition: opacity 1s ease; }
+    #overlay span{ font-size:36px; font-weight:900; color:#fff; text-transform:uppercase; }
+
+    .main{ display:none; z-index: 1; height:100vh; justify-content:center; align-items:center; padding:16px; }
+    .wrap{ width:450px; max-width:95vw; text-align:center; display:flex; flex-direction:column; align-items:center; gap:15px; }
+
+    /* ===== Reveal Animation ===== */
+    .reveal{ opacity:0; transform:translateY(15px); filter:blur(10px); transition:opacity 800ms ease, transform 800ms ease, filter 800ms ease; }
+    .reveal.show{ opacity:1; transform:translateY(0); filter:blur(0); }
+
+    /* البروفايل */
+    .pfp-wrap{ position:relative; width:220px; height:220px; }
+    .pfpBase{ width:190px; height:190px; border-radius:50%; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); object-fit:cover; z-index:1; border:2px solid rgba(255,255,255,0.85); }
+    .pfpDecor{ position:absolute; width: 100%; height:100%; top:0; left:0; object-fit:contain; z-index:2; pointer-events:none; }
+
+    h1{ font-size:55px; font-weight:900; font-style: italic; text-transform: uppercase; letter-spacing:1px; }
+    .quote{ font-size:24px; font-weight: 500; opacity:0.9; margin-top: -5px; font-style: italic; }
+    .location{ margin-top:4px; font-size:14px; opacity:0.8; display:flex; align-items:center; justify-content:center; gap:8px; }
+
+    /* ===== Discord Card مع Glow Effects ===== */
+    .discord{ width:100%; background:rgba(255, 255, 255, 0.09); border:1px solid rgba(255,255,255,0.1); backdrop-filter:blur(22px); -webkit-backdrop-filter:blur(22px); border-radius:36px; padding:30px 25px; display:flex; align-items:center; gap:20px; text-align: left; transition: box-shadow .3s ease, border-color .3s ease; }
+    .glow-online{ box-shadow:0 0 22px rgba(59,165,93,0.6); border-color:rgba(59,165,93,0.3); }
+    .glow-idle{ box-shadow:0 0 22px rgba(250,166,26,0.6); border-color:rgba(250,166,26,0.3); }
+    .glow-dnd{ box-shadow:0 0 22px rgba(237,66,69,0.6); border-color:rgba(237,66,69,0.3); }
+    .glow-off{ box-shadow:0 0 18px rgba(116,127,141,0.5); border-color:rgba(116,127,141,0.2); }
+
+    .miniPfpWrap{ position:relative; width:80px; height:80px; flex-shrink:0; }
+    #discordAvatar{ width:80px; height:80px; border-radius:50%; border:2px solid rgba(255,255,255,0.7); }
+    #discordDecorMini{ position:absolute; inset:-10px; width:100px; height:100px; z-index:2; }
+    #activityImage { width: 80px; height: 80px; border-radius: 12px; display: none; object-fit: cover; border:2px solid rgba(255,255,255,0.45); }
+
+    .discord-info{ flex:1; overflow:hidden; }
+    #discordName{ font-size:22px; font-weight:800; font-style: italic; margin-bottom: 2px; }
+    #discordStatusText{ font-size:15px; opacity:0.9; display:flex; align-items:center; gap:8px; }
+    #discordActivity{ margin-top:4px; font-size:14px; opacity:0.7; }
+
+    /* أيقونة الحالة (الصور الرسمية) */
+    .status-img { width: 18px; height: 18px; object-fit: contain; vertical-align: middle; }
+
+    /* السوشل ميديا */
+    .socials{ margin-top:15px; display:flex; gap:18px; }
+    .socials a{ width:65px; height:65px; border-radius:18px; display:flex; align-items:center; justify-content:center; color:#fff; background:rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); backdrop-filter:blur(14px); transition:transform .25s ease; font-size:32px; text-decoration: none; }
+    .socials a:hover{ transform:scale(1.1); opacity:0.9; }
+
+    .views{ margin-top:15px; font-size:14px; opacity:0.9; display:flex; align-items:center; gap:8px; width:100%; justify-content:center; }
+  </style>
+</head>
+<body>
+  <video autoplay muted loop playsinline id="bgVideo"><source src="998.mp4" type="video/mp4"></video>
+  <div class="bg-dark"></div>
+  <div id="overlay"><span>اضغط هنا</span></div>
+  <audio id="music" loop><source src="5554.m4a" type="audio/mpeg"></audio>
+
+  <div class="main" id="main">
+    <div class="wrap">
+      <div class="pfp-wrap reveal">
+        <img id="baseAvatar" class="pfpBase" src="https://cdn.discordapp.com/embed/avatars/0.png">
+        <img id="decorAvatar" class="pfpDecor">
+      </div>
+      <h1 class="reveal">𝑪𝑨𝑷𝑶𝑵𝑰</h1>
+      <div class="quote reveal">Whoever revives a dead heart, he is for it</div>
+
+      <div class="discord glow-off reveal" id="discordBox">
+        <div class="miniPfpWrap" id="pfpContainer">
+          <img id="discordAvatar" src="https://cdn.discordapp.com/embed/avatars/0.png">
+          <img id="discordDecorMini">
+        </div>
+        <img id="activityImage">
+        <div class="discord-info">
+          <div id="discordName">𝑪𝑨𝑷𝑶𝑵𝑰</div>
+          <div id="discordStatusText">
+             <img id="statusImg" class="status-img" style="display:none;">
+             <span id="statusRawText">Loading...</span>
+          </div>
+          <div id="discordActivity"></div>
+        </div>
+      </div>
+
+      <div class="socials reveal">
+        <a href="https://discord.com/users/1159527398098882703" target="_blank"><i class="fab fa-discord"></i></a>
+        <a href="https://www.instagram.com/caponi.11" target="_blank"><i class="fab fa-instagram"></i></a>
+        <a href="https://spotify.com" target="_blank"><i class="fab fa-spotify"></i></a>
+        <a href="https://www.tiktok.com/@caponi.666" target="_blank"><i class="fab fa-tiktok"></i></a>
+      </div>
+      <div class="views reveal"><i class="fa-regular fa-eye"></i> <span id="viewsText">...</span></div>
+    </div>
+  </div>
+
+  <script>
+    const USER_ID = "1159527398098882703";
+    const statusIcons = {
+      online: "https://raw.githubusercontent.com/leonardosnt/discord-status-icons/master/png/online.png",
+      idle: "https://raw.githubusercontent.com/leonardosnt/discord-status-icons/master/png/idle.png",
+      dnd: "https://raw.githubusercontent.com/leonardosnt/discord-status-icons/master/png/dnd.png",
+      offline: "https://raw.githubusercontent.com/leonardosnt/discord-status-icons/master/png/offline.png"
+    };
+
+    document.getElementById("overlay").addEventListener("click", function() {
+      this.style.opacity = "0";
+      setTimeout(() => {
+        this.style.display = "none";
+        document.getElementById("main").style.display = "flex";
+        document.querySelectorAll(".reveal").forEach((el, i) => {
+          setTimeout(() => el.classList.add("show"), 110 * i);
+        });
+        document.getElementById("music").play();
+      }, 1000);
+    });
+
+    async function updateLanyard() {
+      try {
+        const res = await fetch(`https://api.lanyard.rest/v1/users/${USER_ID}`);
+        const { data } = await res.json();
+        const u = data.discord_user;
+        const avatarUrl = `https://cdn.discordapp.com/avatars/${USER_ID}/${u.avatar}.png?size=256`;
+        document.getElementById("baseAvatar").src = avatarUrl;
+        document.getElementById("discordAvatar").src = avatarUrl;
+
+        const decor = u.avatar_decoration_data;
+        if(decor) {
+          const dUrl = `https://cdn.discordapp.com/avatar-decoration-presets/${decor.asset}.png?size=256`;
+          document.getElementById("decorAvatar").src = dUrl;
+          document.getElementById("discordDecorMini").src = dUrl;
+        }
+
+        const st = data.discord_status;
+        document.getElementById("statusImg").src = statusIcons[st] || statusIcons.offline;
+        document.getElementById("statusImg").style.display = "inline-block";
+        document.getElementById("statusRawText").innerText = st.charAt(0).toUpperCase() + st.slice(1);
+        
+        const box = document.getElementById("discordBox");
+        box.className = "discord reveal show " + (st === "online" ? "glow-online" : st === "idle" ? "glow-idle" : st === "dnd" ? "glow-dnd" : "glow-off");
+
+        const activityDiv = document.getElementById("discordActivity");
+        const actImg = document.getElementById("activityImage");
+        const pfpCont = document.getElementById("pfpContainer");
+
+        if (data.listening_to_spotify) {
+            pfpCont.style.display = "none"; actImg.style.display = "block";
+            actImg.src = data.spotify.album_art_url;
+            activityDiv.innerHTML = `Listening to <b>Spotify</b><br>${data.spotify.song}`;
+        } else {
+            const act = data.activities.find(a => a.type !== 4);
+            pfpCont.style.display = "block"; actImg.style.display = "none";
+            activityDiv.innerText = act ? `Playing ${act.name}` : "No activity";
+        }
+      } catch(e) {}
+    }
+
+    // Views Counter البديل
+    async function updateViews() {
+        try {
+            const res = await fetch(`https://api.countapi.xyz/hit/caponi-page/main`);
+            const data = await res.json();
+            document.getElementById("viewsText").textContent = data.value;
+        } catch(e) { document.getElementById("viewsText").textContent = "—"; }
+    }
+
+    updateViews();
+    setInterval(updateLanyard, 5000);
+    updateLanyard();
+  </script>
+</body>
+</html>
