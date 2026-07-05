@@ -128,7 +128,7 @@
         <a href="https://spotify.com" target="_blank" title="Spotify"><i class="fab fa-spotify"></i></a>
         <a href="https://www.tiktok.com/@caponi.666" target="_blank" title="TikTok"><i class="fab fa-tiktok"></i></a>
       </div>
-      <div class="views reveal"><i class="fa-regular fa-eye"></i> المشاهدات: <span id="viewsText">...</span></div>
+      <div class="views reveal"><i class="fa-regular fa-eye"></i> VU: <span id="viewsText">...</span></div>
     </div>
   </div>
 
@@ -184,7 +184,7 @@
         } else if (data.activities.length > 0) {
             const act = data.activities.find(a => a.type !== 4);
             pfpCont.style.display = "block"; actImg.style.display = "none";
-            if (act) { activityDiv.innerText = `يلعب ${act.name}`; } 
+            if (act) { activityDiv.innerText = ` ${act.name}`; } 
             else { activityDiv.innerText = "لا يوجد نشاط حالي"; }
         } else {
             pfpCont.style.display = "block"; actImg.style.display = "none";
