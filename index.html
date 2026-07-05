@@ -103,7 +103,7 @@
         <img id="baseAvatar" class="pfpBase" src="https://cdn.discordapp.com/embed/avatars/0.png">
         <img id="decorAvatar" class="pfpDecor">
       </div>
-      <h1 class="reveal">𝑪𝑨𝑷𝑶𝑵𝑰</h1>
+      <h1 class="reveal">CAPONI 🇩🇪</h1>
       <div class="quote reveal">Whoever revives a dead heart, he is for it</div>
 
       <div class="discord reveal" id="discordBox">
@@ -113,7 +113,7 @@
         </div>
         <img id="activityImage">
         <div class="discord-info">
-          <div id="discordName">𝑪𝑨𝑷𝑶𝑵𝑰</div>
+          <div id="discordName">CAPONI 🇩🇪</div>
           <div id="discordStatusText">
              <img id="statusImg" class="status-img" style="display:none;">
              <span id="statusRawText">Loading...</span>
@@ -180,15 +180,15 @@
         if (data.listening_to_spotify) {
             pfpCont.style.display = "none"; actImg.style.display = "block";
             actImg.src = data.spotify.album_art_url;
-            activityDiv.innerHTML = `يستمع إلى <b>Spotify</b><br>${data.spotify.song}`;
+            activityDiv.innerHTML = `listens to <b>Spotify</b><br>${data.spotify.song}`;
         } else if (data.activities.length > 0) {
             const act = data.activities.find(a => a.type !== 4);
             pfpCont.style.display = "block"; actImg.style.display = "none";
             if (act) { activityDiv.innerText = ` ${act.name}`; } 
-            else { activityDiv.innerText = "لا يوجد نشاط حالي"; }
+            else { activityDiv.innerText = "No activity"; }
         } else {
             pfpCont.style.display = "block"; actImg.style.display = "none";
-            activityDiv.innerText = "غير نشط";
+            activityDiv.innerText = "Inactive";
         }
       } catch(e) {}
     }
